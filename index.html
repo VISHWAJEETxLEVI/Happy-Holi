@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Holi 🎨</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    overflow:hidden;
+    background: linear-gradient(45deg, #ff4e50, #f9d423, #24c6dc, #ab47bc);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* Opening Screen */
+#opening{
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:10;
+}
+
+#opening h2{
+    margin-bottom:20px;
+    font-size:2rem;
+}
+
+.container{
+    background: rgba(255,255,255,0.15);
+    padding:30px 20px;
+    border-radius:20px;
+    backdrop-filter: blur(10px);
+    width:90%;
+    max-width:400px;
+    position:relative;
+    z-index:2;
+    display:none;
+}
+
+h1{
+    font-size:2.2rem;
+    color:white;
+    margin-bottom:10px;
+}
+
+p{
+    color:white;
+    font-size:1.1rem;
+    margin-bottom:15px;
+}
+
+.sender{
+    margin-top:15px;
+    font-size:1rem;
+    color:#fff;
+    font-weight:bold;
+}
+
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:25px;
+    font-size:1rem;
+    background:white;
+    color:#ff4e50;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+    margin:5px;
+}
+
+button:hover{
+    transform:scale(1.1);
+    background:#ffe082;
+}
+
+/* Splash */
+.splash{
+    position:absolute;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    opacity:0.8;
+    animation: splashAnim 1s ease-out forwards;
+}
+
+@keyframes splashAnim{
+    0%{ transform:scale(0); opacity:1;}
+    100%{ transform:scale(8); opacity:0;}
+}
+
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Opening Screen -->
+<div id="opening">
+    <h2>🌈 Happy Holi 🌈</h2>
+    <button onclick="openWishes()">Click To Open 🎉</button>
+</div>
+
+<!-- Main Wishes -->
+<div class="container" id="mainContent">
+    <h1>🎨 Happy Holi 🎉</h1>
+    <p>
+        Happy Holi Madaram Chodram 😜 Is baar teri shakal ki color se maa ch#d jaye...or yaad rakhna bete hum phiri phyre lober hai😈 holi pe glue gol laga ke seedha baloon se maiya ch#denge...Aur ek baat yaad rakhna bo to tu apna khaas hai barna tum jaiso ko to mai pencil se likh ke mita du...Aur sun docter hi kahde...😂🌈
+    </p>
+    <button onclick="celebrate()">Celebrate 🎊</button>
+    <button onclick="toggleMusic()" id="musicBtn">🔊 Music ON</button>
+
+    <div class="sender">
+        Send By <span style="color:#ffe082;">Vishwajeet (HAPPY)</span>
+    </div>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<!-- 🎵 CUSTOM MUSIC -->
+<!-- Apni mp3 file ka naam yaha change karo -->
+<audio id="holiMusic" once>
+    <source src="holi.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let confetti = [];
+let animationInterval;
+let musicPlaying = false;
+
+/* Opening */
+function openWishes(){
+    document.getElementById("opening").style.display="none";
+    document.getElementById("mainContent").style.display="block";
+    startMusic();
+}
+
+/* Music Controls */
+function startMusic(){
+    document.getElementById("holiMusic").play();
+    musicPlaying = true;
+}
+
+function toggleMusic(){
+    const music = document.getElementById("holiMusic");
+    const btn = document.getElementById("musicBtn");
+
+    if(musicPlaying){
+        music.pause();
+        btn.innerHTML="🔇 Music OFF";
+    }else{
+        music.play();
+        btn.innerHTML="🔊 Music ON";
+    }
+    musicPlaying = !musicPlaying;
+}
+
+/* Confetti */
+function createConfetti(){
+    for(let i=0;i<120;i++){
+        confetti.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            r: Math.random()*6+4,
+            color: `hsl(${Math.random()*360},100%,50%)`
+        });
+    }
+}
+
+function drawConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    confetti.forEach((c)=>{
+        ctx.beginPath();
+        ctx.fillStyle = c.color;
+        ctx.arc(c.x,c.y,c.r,0,Math.PI*2,false);
+        ctx.fill();
+        c.y += 2;
+        if(c.y > canvas.height){
+            c.y = -10;
+            c.x = Math.random()*canvas.width;
+        }
+    });
+}
+
+function startConfetti(){
+    confetti = [];
+    createConfetti();
+    clearInterval(animationInterval);
+    animationInterval = setInterval(drawConfetti,20);
+}
+
+/* Celebrate */
+function celebrate(){
+    startConfetti();
+    for(let i=0;i<8;i++){
+        setTimeout(()=>{
+            createSplash(
+                Math.random()*window.innerWidth,
+                Math.random()*window.innerHeight
+            );
+        }, i*200);
+    }
+}
+
+/* Color Splash */
+function createSplash(x,y){
+    const splash = document.createElement("div");
+    splash.classList.add("splash");
+    splash.style.left = x + "px";
+    splash.style.top = y + "px";
+    splash.style.background = `hsl(${Math.random()*360},100%,50%)`;
+    document.body.appendChild(splash);
+    setTimeout(()=>{ splash.remove(); },1000);
+}
+
+window.addEventListener("resize", ()=>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
